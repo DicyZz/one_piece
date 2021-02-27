@@ -5,6 +5,8 @@
 ---
 
 *   arm_assembly					arm汇编指令
+*   C                                           C语言基础
+*   display_port                        显示接口
 *   gcc_inline_assembly		  gcc内敛汇编使用
 *   git	                                     git使用
 *   Kconfig	                            Kconfig语法
@@ -14,6 +16,7 @@
 *   nfs_tftp                               nfs和tftp使用
 *   QEMU                                 QEMU使用
 *   shell                                    shell语法
+*   sysfs                                   sys文件系统
 *   terminator                         terminator使用
 *   vim                                      vim使用
 *   others                                 其他的笔记
