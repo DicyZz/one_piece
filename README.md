@@ -5,11 +5,11 @@
 ---
 
 *   arm_assembly					arm汇编指令
-
 *   gcc_inline_assembly		  gcc内敛汇编使用
 *   git	                                     git使用
 *   Kconfig	                            Kconfig语法
 *   kgdb	                                kgdb使用
+*   linux_boot                          linux启动相关
 *   Makefile	                          Makefile语法
 *   nfs_tftp                               nfs和tftp使用
 *   QEMU                                 QEMU使用
