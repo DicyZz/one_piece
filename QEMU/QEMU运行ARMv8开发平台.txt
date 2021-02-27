@@ -1,0 +1,44 @@
+Ubuntu16.04的qemu包含了qemu-system-aarch64工具，Ubuntu14.04需要编译
+cd qemu-2.6.0
+./configure -target-list=aarch64-softmmu
+make
+sudo make install
+
+sudo apt-get install gcc-oaarch64-linux-gnu
+
+制作一个aarch64架构的最小文件系统，只是编译环境变量不同
+export ARCH=arm64
+export CROSS_COMPILE=aarch64-linux-gnu-
+make menuconfig
+General setup --->
+	[*] Initial RAM filesystem and RAM disk (initramfs/initrd) support
+		(_install_arm64) Initramfs source file(s)
+Boot options -->
+	()Default kernel command string
+Kernel Features --->
+	Page size (4KB) --->
+		Virtual address space size (48-bit) --->
+make -j4
+
+运行QEMU模拟2核Cortex-A57开发平台
+qemu-system-aarch64 -machine virt -cpu cortex-a57 -machine type=virt -nographic -m 2048 -smp 2 -kernel arch/arm64/boot/Image --append "rdinit=linuxrc console=ttyAMA0"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

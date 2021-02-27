@@ -1,0 +1,18 @@
+在GNU C中，宏可以接受可变数目的参数，就象函数一样，例如: 
+#define pr_debug(fmt,arg...) \ 
+printk(KERN_DEBUG fmt, ##arg)
+
+C99编译器标准终于改变了这种局面，它允许你可以定义可变参数宏(variadic macros)，可变参数宏就像下面这个样子:
+#define debug(...) printf(__VA_ARGS__) 
+
+GCC始终支持复杂的宏，它使用一种不同的语法从而可以使你可以给可变参数一个名字，例如下面的例子: 
+#define debug(format, args...) fprintf (stderr, format, args) 
+
+GNU CPP还有两种更复杂的宏扩展，支持上面两种格式的定义格式。 
+在标准C里，你不能省略可变参数，但是你却可以给它传递一个空的参数。例如，下面的宏调用在ISO C里是非法的，
+因为字符串后面没有逗号:
+debug ("A message") 
+GNU CPP在这种情况下可以让你完全的忽略可变参数。在上面的例子中，编译器仍然会有问题(complain)，
+因为宏展开后，里面的字符串后面会有个多余的逗号。
+为了解决这个问题，CPP使用一个特殊的'##'操作。书写格式为: 
+#define debug(format, ...) fprintf (stderr, format, ##__VA_ARGS__) 

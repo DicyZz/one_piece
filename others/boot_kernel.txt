@@ -1,0 +1,446 @@
+#########################################################################	
+#									#
+#				firmware changed 			#
+#									#
+#########################################################################	
+# 	VxWorks
+1.setenv bootcmd "load mmc 1:1 0x82000000 zImage;load mmc 1:1 0x88000000 am57xx-beagle-x15.dtb;bootz 0x82000000 - 0x88000000;"
+
+2.ifconfig("cpsw1 172.16.90.100 netmask 255.255.255.0 up")
+
+# 	Linux
+1.ifconfig eth1 172.16.90.70
+
+2.cd /boot
+rm zImage am57xx-beagle-x15.dtb
+tftp -g -r zImage 172.16.90.102
+tftp -g -r am57xx-evm-reva3.dtb 172.16.90.102
+
+cd /run/media/mmcblk0p1
+rm MLO u-boot.img
+tftp -g -r MLO 172.16.90.102
+tftp -g -r u-boot.img 172.16.90.102
+
+3.sync
+
+
+#########################################################################	
+#									#
+#				IPC firmware run			#
+#									#
+#########################################################################
+# 	IPC firmware run
+rm /lib/firmware/dra7-dsp1-fw.xe66 
+ln -s /home/root/work/server_dsp.xe66 /lib/firmware/dra7-dsp1-fw.xe66 
+echo 40800000.dsp > /sys/bus/platform/drivers/omap-rproc/unbind 
+echo 40800000.dsp > /sys/bus/platform/drivers/omap-rproc/bind 
+/home/root/linux-ipc-examples/ex02_messageq/app_host DSP1
+
+/* 查看 remoteproc 状态 */
+cat /sys/kernel/debug/remoteproc/remoteproc*/state
+cat /sys/kernel/debug/remoteproc/remoteproc2/trace0
+
+cat /sys/kernel/debug/memblock/reserved
+cat /sys/kernel/debug/gpio
+cat /sys/kernel/debug/dma_buf/bufinfo
+cat /sys/kernel/debug/pinctrl/pinctrl-maps
+cat /sys/kernel/debug/pinctrl/pinctrl-handles
+cat /sys/kernel/debug/mmc1\mmc0/ios
+/sys/kernel/debug/clk/* 
+
+dmesg | grep -i cma
+
+#########################################################################	
+#									#
+#			u-boot net set && features			#
+#									#
+#########################################################################
+#	Linux
+setenv ipaddr 172.16.90.70
+setenv serverip 172.16.90.102
+setenv gatewayip 172.16.90.1
+setenv netmask 255.255.252.0
+
+#	VxWorks
+copy("/sd0:1/MLO", "/mmc1:1/MLO")
+copy("/sd0:1/u-boot.img", "/mmc1:1/u-boot.img")
+copy("/sd0:1/uVxWorks", "/mmc1:1/uVxWorks")
+copy("/sd0:1/am572x_idk_ca15.dtb", "/mmc1:1/am572x_idk_ca15.dtb")
+
+setenv findfdt setenv fdtfile am572x-idk.dtb ; boot
+
+•初始化内存系统和外围设备。
+•将内核映像加载到内存中的适当位置（可能还会加载初始RAM磁盘）。
+•生成要传递给内核的引导参数（包括机器类型）。
+•为内核设置一个控制台（视频或串行）。
+•输入内核。
+
+
+#########################################################################	
+#									#
+#			u-boot mmc command				#
+#									#
+#########################################################################
+SD卡分区查看（u-boot下）可以在U-Boot的命令行中通过命令查看MMC的信息，如：
+
+U-Boot# mmc list
+OMAP SD/MMC: 0
+OMAP SD/MMC: 1
+列出mmc设备
+
+U-Boot# mmc dev
+mmc0 is current device
+显示当前是那个设备
+
+U-Boot# mmc part
+Partition Map for MMC device 0  --   Partition Type: DOS
+Part    Start Sector    Num Sectors     UUID            Type
+  1     2048            131072          29942d7e-01     0c Boot
+  2     133120          15390720        29942d7e-02     83
+显示当前设备的分区信息。
+
+U-Boot# ls mmc 0:1
+   100688   mlo
+   308232   u-boot.img
+      510   uenv.txt
+3 file(s), 0 dir(s)
+列出设备0第1个分区“/”目录的文件，我没有指定，默认为“/”
+
+
+#########################################################################	
+#									#
+#				about vim				#
+#									#
+#########################################################################
+#vim映射命令
+map  : 正常模式，可视化模式和运算符模式可用
+nmap ：正常模式可用
+vmap ：可视化模式可用
+omap ：运算符模式可用
+map! ：插入模式和命令行模式可用
+imap ：插入模式可用
+cmap ：命令行模式可用
+
+先用vim -b data 以2进制打开文件，然后用xxd工具转化，在vim的命令行模式下：
+
+ :%!xxd       --将当前文本转化为16进制格式
+ :%!xxd -r    --将16进制转化为普通文本
+ 
+通过.xxx.swp文件恢复暂存内容
+ vim -r xxx
+ 
+“使用系统剪切板
+sudo apt-get install vim vim-scripts vim-gtk vim-gnome
+vim --version | grep clipboard
+
+为了关闭此功能，我们要在设置项的名字前添加单词“no”：
+:set noignorecase
+如果我们在某个布尔类型的选项之后添加叹号，则可以反转该设置：
+:set ignorecase!
+如果我们在结尾加一个问号，则可以获取该选项当前的状态：
+:set ignorecase?
+我们还可以通过引入&号后缀，将任意选项重置为默认值：
+:set ignorecase&
+
+强制写入文件
+:w !sudo tee % > /dev/null
+（tee file 从stdin中读取数据并写入file中）
+
+删除每行前1个字符
+:%s/^.\{1\}//
+删除每行后1个字符
+:%s/.\{1\}$//
+
+替换第 n 行开始到最后一行中每一行所有 vivian 为 sky，若 n 为 .，表示从当前行开始到最后一行
+:n,$s/vivian/sky/g 
+替换每一行的第一个 vivian 为 sky
+:%s/vivian/sky/（等同于 :g/vivian/s//sky/）
+替换每一行中所有 vivian 为 sky
+:%s/vivian/sky/g（等同于 :g/vivian/s//sky/g）
+g 放在命令末尾，表示对搜索字符串的每次出现进行替换；不加 g，表示只对搜索字符串的首次出现进行替换；g 放在命令开头，表示对正文中所有包含搜索字符串的行进行替换操作
+
+#########################################################################	
+#									#
+#				Linux控制台常用				#
+#									#
+#########################################################################
+Tab 自动补全
+Ctrl+a 光标移动到开始位置
+Ctrl+e 光标移动到最末尾
+Ctrl+k 删除此处至末尾的所有内容
+Ctrl+u 删除此处至开始的所有内容
+Ctrl – w ：由光标位置开始，往左删除单词。往行首删
+Ctrl -a + Ctrl -k 或 Ctrl -e + Ctrl -u 或 Ctrl -k + Ctrl -u 组合可删除整行。
+Ctrl+y 粘贴由 Ctrl+u ， Ctrl+d ， Ctrl+w 删除的单词
+Ctrl+l 相当于clear，即清屏
+
+#########################################################################	
+#									#
+#				build SDK for ipc			#
+#									#
+#########################################################################
+#	for linux-sdk
+vim Rules.mak #add TI_RTOS_PATH
+make ti-ipc
+make big-data-ipc-demo
+
+#	for rtos-sdk
+cd processor-xxx
+source setenv.sh
+make help
+
+
+#########################################################################	
+#									#
+#				git command				#
+#									#
+#########################################################################
+git add .
+git commit -s 	/git commit --amend
+git fetch origin master:master		
+git rebase master 
+git push origin HEAD:refs/for/master
+
+#########################################################################	
+#									#
+#				kernel shell && features		#
+#									#
+#########################################################################
+diff -urNBw file1 file2 > xxx.patch
+（原始目录在前，修改目录在后）
+-u 	在比较结果中输出上下文一些相同的行
+-r 	递归比较各个子目录下的文件
+-N	将不存在的文件当做空文件
+-w	忽略对空格的比较
+-B	忽略对空行的比较
+
+patch -pn < ../xxx.patch
+（在原始目录中打补丁）
+-p	忽略第n个/前的目录，同级目录为1，表示在当前目录下进行打补丁
+
+#列出当前支持的字符编码
+iconv -l
+iconv  -f 原编码  -t 新编码   原文件 -o 新文件
+
+INSTALL_MOD_PATH 				modules install dir
+
+/etc/modprobe.d 中自动加载模块语法
+softdep xxx pre: yyy	加载xxx之前加载yyy
+softdep xxx post: yyy	加载xxx之后加载yyy
+
+1.IRQ中断通过local_irq_disable（）禁用，而lock_kernel（）用于停止FIQ中断了内核的中断。
+  初始化滴答控制，内存系统和特定于体系结构的子系统，并处理通过的命令行选项引导程序。
+2.设置了堆栈，并初始化了Linux调度程序。
+3.设置了各种存储区域并分配了页面。
+4.中断和异常表以及处理程序以及GIC均已设置。
+5.设置系统计时器，并在此时启用IRQ。附加存储系统发生初始化，然后使用一个称为BogoMips的值来校准核心时钟速度。
+6.设置内核的内部组件，包括文件系统和初始化进程，然后是创建内核线程的线程守护程序。
+7.内核被解锁（启用FIQ）并启动了调度程序。
+8.调用函数do_basic_setup（）来初始化驱动程序，sysctl，工作队列和网络插座。此时，执行到用户模式的切换。
+
+...
+0xC0008000 _text
+...
+0xC0658750 _etext
+0xC0659000 __init_begin
+...
+0xC0782000 __init_end
+0xC0782000 _sdata
+...
+0xC07B1920 _edata
+0xC07B1920 __bss_start
+...
+0xC07DB378 __bss_stop
+0xC07DB378 _end
+
+
+hexedit file  /* 以二进制编辑一个文件 */
+Tab键进入修改模式	F2保存
+/dev/mem: 物理内存的全镜像。可以用来访问物理内存。
+/dev/kmem: kernel看到的虚拟内存的全镜像。可以用来访问kernel的内容。
+用法一般就是open，然后mmap，接着可以使用map之后的地址来访问物理内存。
+
+hexdump -s 0x10000000 -n 256 /dev/mem
+
+#创建链接
+sudo update-alternatives --install   +  （多版本命令在系统中的进入地址） 
+									 +  （在update-alternatives中的注册名称）
+									 +  （实际可执行命令的物理地址） 
+									 +  （自动模式下的优先级数字）
+
+#显示已注册列表
+update-alternatives --display    服务名
+
+#交互修改
+sudo update-alternatives --config   服务名
+
+#非交互修改
+update-alternatives --set	+服务名   +可执行命令的物理路径
+
+parted device
+mkpart
+set 1 boot on #设置启动分区
+mkfs.vfat -n "boot" /dev/mmcxxx-p1
+mkfs.ext4 -L "rootfs" /dev/mmcxxx-p2
+
+echo 0 > tracing_on
+ps找到sh的PID
+echo xxx > set_ftrace_pid
+echo function_graph > current_tracer
+echo 5 > max_graph_depth
+echo 1 > tracing_on
+cat trace_pipe
+
+下载网站
+wget -c -r -np -k -L -p https://xxx.xxx.xxx/xx/xx/
+
+DMB：数据存储器隔离DMB指令保证仅当所有在它前面的存储器访问操作都执行完毕后，才提交(commit)在它后面的存储器访问操作;
+
+DSB：数据同步隔离。比DMB严格，仅当所有在它前面的存储器访问操作都执行完毕后，才执行在它后面的指令（亦即任何指令都要等待存储器访问操作——译者注）;
+
+ISB：指令同步隔离最严格，它会清洗流水线，以保证所有它前面的指令都执行完毕之后，才执行它后面的指令.
+
+cat /proc/sys/kernel/printk
+第一个参数表示console的loglevel，第二个参数表示prink的loglevel，第三个参数表示console的最小值，第四个参数表示console的缺省值
+
+#########################################################################	
+#									#
+#				of api（设备树api）			#
+#									#
+#########################################################################
+
+										  - name (platform_device_id)
+										/
+									   |
+platform device match：of > ACPI > id table > platform_device->name&platform_device_id->name
+						|			   
+						 \				
+						   - compatible > type > name (of_device_id)
+
+of_machine_is_compatible()
+
+
+of_device_is_compatible()
+
+1.寻找节点
+/* 
+ * 根据兼容属性获得设备节点，遍历设备树中的设备节点，看哪个节点的类型、
+ * 兼容属性与输入参数匹配，通常from、type为NULL，则表示遍历所有节点 
+ */
+struct device_node *of_find_compatible_node(struct device_node *from, 
+											const char *type, 
+											const char *compatible)
+											
+/* 
+ * 获取子节点个数 
+ */											
+int of_get_available_child_count(const struct device_node *np)
+
+/*
+ * 通过所给的名字找到相应节点的属性，并返回其数值。若没有找到，则返回NULL。
+ */
+const void *of_get_property(const struct device_node *np, 
+							const char *name,
+							int *lenp)
+
+2.读取属性
+/*
+ * 读取设备节点np的属性名，为propname，属性类型为8、16、32、64位整形数组
+ */
+int of_property_read_u8_array(const struct device_node *np,
+							  const char *propname,
+							  u8 *out_values,
+							  size_t sz)
+int of_property_read_u16_array(const struct device_node *np,
+							  const char *propname,
+							  u8 *out_values,
+							  size_t sz)
+int of_property_read_u32_array(const struct device_node *np,
+							  const char *propname,
+							  u8 *out_values,
+							  size_t sz)
+int of_property_read_u64(const struct device_node *np,
+						 const char *propname,
+						 u8 *out_values)
+
+/*
+ * 读取字符串属性，读取字符串数组属性中的第index个字符串
+ */
+const char *of_clk_get_parent_name(struct device_node *np,
+								   const char *propname,
+								   const char **out_string)
+int of_property_read_string_index(struct device_node *np,
+								  const char *propname,
+								  int index,
+								  const char **output)
+								  
+/*
+ * 如果设备节点np含有propname属性，则返回true，否则返回false
+ */
+static inline bool of_property_read_bool(const struct device_node *np,
+										 const char *propname)
+
+3.内存映射
+/*
+ * 通过设备节点进行设备内存区间的ioremap(),index是内存段的索引
+ */
+void __iomem *of_iomap(struct device_node *node,
+					   int index)
+					   
+/*
+ * 通过设备节点获取与它对应的内存资源的resource结构体，其本质是分析reg
+ * 属性以获取内存基地址、大小等信息并填充到struct resource *r参数指向的
+ * 结构体中
+ */					   
+int of_address_to_resource(struct device_node *dev,
+						   int index,
+						   struct resource *r)
+
+4.解析中断
+/*
+ * 通过设备树获得设备的中断号，实际上是从.dts中的interrupts属性里解析出
+ * 中断号
+ */
+unsigned int irq_of_parse_and_map(struce device_node *dev,
+								  int index)
+
+5.获取与节点对应的platform_device
+/*
+ * 在拿到device_node的情况下，获取对应的platform_device
+ */
+struct platform_device *of_find_device_by_node(struct device_node *np)
+
+
+
+
+mmap()函数是用来将设备内存线性地址映射到用户地址空间。
+ioremap()函数是用来将物理地址转换为虚拟地址。
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

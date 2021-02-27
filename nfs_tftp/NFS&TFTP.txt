@@ -1,0 +1,113 @@
+搭建NFS
+1.配置NFS Server
+安装nfsserver
+sudo apt-get install nfs-kernel-server
+设置共享目录为/work/nfs
+sudo vim /etc/exports
+-->
+/work/nfs/ *(rw,sync,no_root_squash)
+*：允许所有的网络段访问 rw：访问者具有可读写权限 sync：资料同步写入内存和硬盘 no_root_squash：NFS共享目录访问者具有root权限 
+
+NFS常用参数有： 
+ro：只读访问 
+rw：读写访问
+sync 所有数据在请求时写入共享 
+asyncnfs：在写入数据前可以响应请求 
+secure nfs：通过1024以下的安全TCP/IP端口发送 
+insecure nfs：通过1024以上的端口发送 
+wdelay：如果多个用户要写入NFS目录，则归组写入（默认） 
+no_wdelay：如果多个用户要写入NFS目录，则立即写入，当使用async时，无需此设置 
+hide：在NFS共享目录中不共享其子目录 
+no_hide：共享NFS目录的子目录 
+subtree_check：如果共享/usr/bin之类的子目录时，强制nfs检查父目录的权限（默认） 
+no_subtree_check：和上面相对，不检查父目录权限 
+all_squash：共享文件的UID和GID映射匿名用户anonymous，适合公用目录 
+no_all_squash：保留共享文件的UID和GID（默认） 
+root_squash root：用户的所有请求映射成如anonymous用户一样的权限（默认） 
+no_root_squas root：用户具有根目录的完全管理访问权限 
+anonuid=xxx：指定NFS服务器:/etc/passwd:文件中匿名用户的UID
+
+令重启NFS服务器
+sudo /etc/init.d/nfs-kernel-server restart
+
+挂载NFS服务器共享目录到开发板的 /nfs 目录：
+mount -t nfs -o nolock,nfsvers=3,vers=3 192.168.1.2:/home/jian/nfs /nfs
+
+-o nolock：不加文件锁，nfs mount默认选项包括文件锁（lock），依赖于portmap提供的动态端口分配功能
+192.168.1.42:/work/nfs：虚拟机的IP地址是192.168.1.42，共享目录是虚拟机的"/work/nfs"
+
+2.开发板挂载Ubuntu虚拟机NFS服务器共享目录
+开发板安装NFS客户端
+opkg install nfs-utils-client
+mkdir -p /nfs
+mount -t nfs -o nolock,nfsvers=3,vers=3 192.168.1.42:/work/nfs /nfs
+-t nfs：挂载类型（type）是nfs。 
+-o nolock：不加文件锁，nfs mount默认选项包括文件锁（lock），依赖于portmap提供的动态端口分配功能。 
+192.168.1.42:/work/nfs：虚拟机的IP地址是192.168.1.42，共享目录是虚拟机的"/work/nfs"。
+
+3.用NFS挂载根文件系统
+需要bootloader支持网络
+kernel取消掉Initial RAM filesystem and RAM disk
+File systems->
+	Network File Systems->
+		Root file system on NFS
+bootargs 
+noinitrd console=ttySAC0,115200 init=/init root=/dev/nfs rw nfsroot=192.168.1.111:/home/rootfs,proto=tcp,nfsvers=3 ip=192.168.1.110:192.168.1.111:192.168.1.1:255.255.255.0::eth0:off
+
+
+
+搭建TFTP
+1.配置
+sudo apt-get install tftp-hpa tftpd-hpa xinetd
+tftp-hpa和tftpd-hpa（前者是客户端，后者是服务程序）以及xinetd
+编辑配置文件
+sudo vim /etc/xinetd.conf
+->
+# Simple configuration file for xinetd
+#
+# Some defaults, and include /etc/xinetd.d/
+defaults
+{
+# Please note that you need a log_type line to be able to use log_on_success
+# and log_on_failure. The default is the following :
+# log_type = SYSLOG daemon info
+}
+includedir /etc/xinetd.d
+
+sudo vim /etc/default/tftpd-hpa
+->
+# /etc/default/tftpd-hpa
+TFTP_USERNAME="tftp"
+TFTP_DIRECTORY="/home/jian/tftp_server"
+TFTP_ADDRESS="0.0.0.0:69"
+TFTP_OPTIONS="-l -c -s"
+
+修改/home/jian/tftp_server权限为777
+
+sudo vim /etc/xinetd.d/tftp
+->
+service tftp
+{
+protocol = udp
+port = 69
+socket_type = dgram
+wait = yes
+user = root
+server = /usr/sbin/in.tftpd
+server_args = -s /home/jian/tftp_server -c
+disable = no
+per_source = 11
+cps = 100 2
+flags = IPv4
+}
+
+sudo service tftpd-hpa restart
+sudo service xinetd reload
+sudo service xinetd restart
+
+
+
+
+
+
+

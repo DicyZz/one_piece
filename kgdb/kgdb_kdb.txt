@@ -1,0 +1,98 @@
+kdb指令级内核调试器  kgdb源码级内核调试器
+================================================
+0.配置内核
+================================================
+CONFIG_DEBUG_RODATA = n
+CONFIG_FRAME_POINTER = y		使KDB能够打印更多的栈信息
+CONFIG_KGDB = y
+CONFIG_KGDB_SERIAL_CONSOLE = y
+CONFIG_KGDB_KDB = y
+CONFIG_KDB_KEYBOARD = y			如果是通过目标版的键盘与KDB通信，需要把这个打开，且键盘不能是USB接口
+CONFIG_KALLSYMS = y				加入符号信息
+
+Kernel hacking
+CONFIG_DEBUG_INFO = y			包含基本调试信息
+CONFIG_DEBUG_KERNEL = y			包含驱动调试信息
+
+
+================================================
+1.利用agent-proxy工具复用一个串口，虚拟出两个TCP端口
+================================================
+./agent-proxy 5550^5551 0 /dev/ttyS1,115200 &
+ser2net也可以，minicom不稳定
+
+
+================================================
+2.将target接入host
+================================================
+telnet localhost 5550
+
+
+================================================
+3.1 target进入kdb
+================================================
+echo ttyS2 > /sys/module/kgdboc/parameters/kgdboc
+echo g > /proc/sysrq-trigger
+
+================================================
+3.2 target进入kdb（设置uboot环境变量）
+================================================
+setenv args_mmc 'xxx xxx kgdboc=ttyS2,115200 kgdbwait' 启动后直接进入kdb
+
+setenv args_mmc 'xxx xxx kgdboc=ttyS2,115200'
+echo g > /proc/sysrq-trigger
+
+================================================
+4.利用本地gdb连接target kdb
+================================================
+arm-linux-gnueabihf-gdb vmlinux
+set remotebaud 115200
+target remote localhost:5551
+
+
+================================================
+5.gdb命令&kdb命令
+================================================
+maintenance packet 3		切换到kdb
+moniter help				在gdb执行kdb命令
+
+更多GDB命令参考其他
+
+
+================================================
+6.退出gdb
+================================================
+CTRL+z
+kill -9 %
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

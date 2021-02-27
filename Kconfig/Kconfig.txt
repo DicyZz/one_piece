@@ -1,0 +1,49 @@
+（1） menu/endmenu （类似于目录，但不可选）
+menu "Floating point emulation"
+
+	config FPE_NWFPE
+		
+	..............
+
+	config FPE_NWFPE_XP
+
+	.............
+
+endmenu
+
+（2） menuconfig （可选的目录）
+menuconfig NET
+
+	.............
+
+（3） config （配置项）
+config NET
+	bool(y/n)/tristate(y/m/n)/string(字符串)/hex(十六进 制)/integer(整数) "提示"
+	prompt "提示，可不写"
+	default 默认值
+	depends on B （依赖B，B选中这项才可选）
+	select A （反向依赖，此项选中则A选中）
+	comment "帮助信息"
+	source "net/Kconfig" （包含其他Kconfig文件）
+	range A B （范围，在AB之间，用于 hex 和 integer）
+	help 帮助信息
+
+（4） choice/endchoice （多选一或多选多，choice条目中定义的变量只有 bool 和 tristate类型）
+choice
+
+	prompt "ARM system type"
+
+	default ARCH_VERSATILE
+
+	config ARCH_AAEC2000
+	
+	.........
+	
+	config ARCH_REALVIEW
+	
+	.........
+	
+endchoice
+
+
+
