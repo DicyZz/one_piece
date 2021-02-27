@@ -1,0 +1,69 @@
+sys/
+-block 
+	这里是系统中当前所有的块设备所在，按照功能来说放置在 /sys/class 之下会更合适，但只是由于历史遗留因素而一直存在于 /sys/block, 但从 2.6.22 开始就已标记为过时，只有在打开了 CONFIG_SYSFS_DEPRECATED 配置下编译才会有这个目录的存在，并且在 2.6.26 内核中已正式移到 /sys/class/block, 旧的接口 /sys/block 为了向后兼容保留存在，但其中的内容已经变为指向它们在 /sys/devices/ 中真实设备的符号链接文件；
+	
+-bus 
+	这是内核设备按总线类型分层放置的目录结构， devices 中的所有设备都是连接于某种总线之下，在这里的每一种具体总线之下可以找到每一个具体设备的符号链接，它也是构成 Linux 统一设备模型的一部分； 
+	
+-class
+	这是按照设备功能分类的设备模型，如系统所有输入设备都会出现在 /sys/class/input 之下，而不论它们是以何种总线连接到系统。它也是构成 Linux 统一设备模型的一部分；
+	
+-dev 
+	这个目录下维护一个按字符设备和块设备的主次号码(major:minor)链接到真实的设备(/sys/devices下)的符号链接文件，它是在内核 2.6.26 首次引入；
+	
+-devices 
+	这是内核对系统中所有设备的分层次表达模型，也是 /sys 文件系统管理设备的最重要的目录结构
+	
+-firmware 
+	这里是系统加载固件机制的对用户空间的接口，关于固件有专用于固件加载的一套API，在附录 LDD3 一书中有关于内核支持固件加载机制的更详细的介绍；
+	devicetree	设备树映射
+	fdt			设备树二进制文件
+	
+-fs  
+	这里按照设计是用于描述系统中所有文件系统，包括文件系统本身和按文件系统分类存放的已挂载点，但目前只有 fuse,gfs2 等少数文件系统支持 sysfs 接口，一些传统的虚拟文件系统(VFS)层次控制参数仍然在 sysctl (/proc/sys/fs) 接口中中；
+	cgroups	该目录通常用作tmpfs（5）文件系统的安装点，其中包含cgroups（7）文件系统的安装点。
+	ext4
+	
+-kernel  
+	这里是内核所有可调整参数的位置，目前只有 uevent_helper, kexec_loaded, mm, 和新式的 slab 分配器等几项较新的设计在使用它，其它内核可调整参数仍然位于 sysctl (/proc/sys/kernel) 接口中 ;
+	debug
+	fscaps
+	iommu_groups
+	mm
+	notes
+	rcu_expedited
+	slab
+	uevent_helper
+	uevent_seqnum 
+	
+-module
+	这里有系统中所有模块的信息，不论这些模块是以内联(inlined)方式编译到内核映像文件(vmlinuz)中还是编译为外部模块(ko文件)，都可能会出现在 /sys/module 中
+
+-power
+	这里是系统中电源选项，这个目录下有几个属性文件可以用于控制整个机器的电源状态，如可以向其中写入控制命令让机器关机、重启等。
+	pm_async
+	pm_freeze_timeout
+	pm_print_times
+	pm_test
+	pm_wakeup_irq
+	state
+	wakeup_count
+
+sysfs有什么用？sysfs可以看出device是否注册成功、存在哪些device、driver是否注册、device和driver是都匹配、device匹配的driver是哪个等等。先说第一项技能。deivce是否注册。
+就以i2c设备为例说明。/sys/bus/i2c/devices该目录下面全是i2c总线下面的devices。如何确定自己的device是否注册呢？
+首选你需要确定自己的device挂接的总线是哪个i2c（i2c0, i2c1...）。假设设备挂接i2c3，从地址假设0x55。那么devices目录只需要查看是否有3-0055目录即可。如何确定device是否匹配了驱动？进入3-0055目录，其实你可以看到driver的符号链接。如果没有，那么就是没有driver。
+driver是否注册如何确定呢？方法类似。/sys/bus/i2c/drivers目录就是所有注册的i2c driver。方法如上。不再列举。
+你以为就这些简单的功能了吗？其实不是，还有很多待你探讨。主要是各种目录之间的关系，device注册会出现什么目录？那么driver呢？各种符号链接会在那些目录？等等。
+
+
+
+
+
+
+
+
+
+
+
+
+
