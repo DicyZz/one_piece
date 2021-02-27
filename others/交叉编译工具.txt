@@ -1,0 +1,204 @@
+#########################################################################	
+#									#
+#			tools						#
+#									#
+#########################################################################
+
+1.nm [option(s)] [file(s)]
+选项：
+	-A 在每个符号信息的前面打印所在对象文件名称；
+	-C 输出demangle过了的符号名称；
+	-D 打印动态符号；
+	-l 使用对象文件中的调试信息打印出所在源文件及行号；
+	-n 按照地址/符号值来排序；
+	-u 打印出那些未定义的符号；
+
+常见的符号类型:
+	A 该符号的值在今后的链接中将不再改变；
+	B 该符号放在BSS段中，通常是那些未初始化的全局变量；
+	D 该符号放在普通的数据段中，通常是那些已经初始化的全局变量；
+	T 该符号放在代码段中，通常是那些全局非静态函数；
+	U 该符号未定义过，需要自其他对象文件中链接进来；
+	W 未明确指定的弱链接符号；同链接的其他对象文件中有它的定义就用上，否则就用一个系统特别指定的默认值
+
+Note
+	-C 总是适用于c++编译出来的对象文件。还记得c++中有重载么？为了区分重载函数，c++编译器会将函数返回值/参数等信息附加到函数名称中去形成一个mangle过的符号，那用这个选项列出符号的时候，做一个逆操作，输出那些原始的、我们可理解的符号名称。
+	
+	使用-l时，必须保证你的对象文件中带有符号调式信息，这一般要求你在编译的时候指定一个 -g 选项，见 Linux:Gcc。
+	使用nm前，最好先用Linux:File查看对象文件所属处理器架构，然后再用相应交叉版本的nm工具。
+
+
+2.ldd [option(s)] [file(s)]
+	ldd显示可执行模块的dependency的工作原理，其实质是通过ld-linux.so（elf动态库的装载器）来实现的ld-linux.so模块会先于executable模块程序工作，并获得控制权，因此当上述的那些环境变量被设置时，ld-linux.so选择了显示可执行模块的dependency。/lib/ld-linux.so.2 --list program（这相当于ldd program）
+
+
+3.objdump命令是Linux下的反汇编目标文件或者可执行文件的命令
+选项
+	-a 
+	显示档案库的成员信息,类似ls -l将lib*.a的信息列出
+	
+	-b bfdname  
+	指定目标码格式。这不是必须的，objdump能自动识别许多格式
+	
+	-g 
+	显示调试信息。企图解析保存在文件中的调试信息并以C语言的语法显示出来
+	
+	-C 	将底层的符号名解码成用户级名字，除了去掉所开头的下划线之外，还使得C++函数名以可理解的方式显示出来。
+	
+	-e 
+	类似-g选项，但是生成的信息是和ctags工具相兼容的格式。
+	
+	-d 
+	从objfile中反汇编那些特定指令机器码的section。
+	
+	-D 
+	与 -d 类似，但反汇编所有section.
+	
+	-EB 
+	-EL 	指定目标文件的小端。这个项将影响反汇编出来的指令。在反汇编的文件没描述小端信息的时候用。例如S-records.
+	
+	-f 
+	--file-headers 
+	显示objfile中每个文件的整体头部摘要信息。
+	
+	-h 
+	显示目标文件各个section的头部摘要信息
+	
+	-j name 
+	仅仅显示指定名称为name的section的信息
+	
+	-r 	显示文件的重定位入口。如果和-d或者-D一起使用，重定位部分以反汇编后的格式显示出来。
+	
+	-R 
+	显示文件的动态重定位入口，仅仅对于动态目标文件意义，比如某些共享库。
+	
+	-s 
+	显示指定section的完整内容。默认所有的非空section都会被显示。
+	
+	-S 	尽可能反汇编出源代码，尤其当编译的时候指定了-g这种调试参数时，效果比较明显。隐含了-d参数。
+	
+	-t 
+	显示文件的符号表入口。类似于nm -s提供的信息
+	
+	-T 	显示文件的动态符号表入口，仅仅对动态目标文件意义，比如某些共享库。它显示的信息类似于 nm -D|--dynamic 显示的信息
+	
+	-x 
+	显示所可用的头信息，包括符号表、重定位入口。-x 等价于-a -f -h -r -t 同时指定。
+	
+	-z 
+	一般反汇编输出将省略大块的零，该选项使得这些零块也被反汇编。
+
+• View all data/code in every section of an ELF file:
+objdump -D <elf_object>
+• View only program code in an ELF file:
+objdump -d <elf_object>
+• View all symbols:
+objdump -tT <elf_object>
+
+
+4.objcopy -O bfdname infile outfile 
+	objcopy用于将object的部分获全部内容拷贝到另一个object，从而可以实现格式的变换。
+	raw_binary文件是没有任何结构的，其内容就是赤裸裸的代码与数据的组合体。
+	将xxx.o转换成s-record文件中，通常涉及到text段
+选项
+	-S
+	去掉源文件的符号信息和relocation信息
+	
+	-g
+	去除掉调试符号信息和相关的段
+	
+	-R sectionname
+	去除掉由sectionname指定的section
+	
+	-O bfdname
+	输出文件的bfdname
+	
+	-K symbolname
+	保留由symbolname指定的符号信息
+	
+	-x
+	处理符号
+	
+	-N symbolname
+	去除掉由symbolname指定的符号信息
+
+
+5.ld
+选项
+	-T File     --script FILE指定一个链接器脚本文件，指示编译器按照脚本进行链接；
+	-Tbss ADDRESS    bss段的链接地址；
+	-Ttext ADDRESS   代码段链接地址；
+	-Tdata ADDRESS  数据段链接地址；
+	-r --relocateable 产生可重定向的输出，比如，产生一个输出文件它可再次作为‘ld'的输入，这经常被叫做“部分链接”，当我们需要将几个小的.o文件链接成为一个.o文件的时候，需要使用此选项。
+	-e  指定程序的入口标号；
+	-l   LibName 指定要链接的库；
+	-L  Directory 增加库文件的搜索路径；
+	-o  FILE 设置输出文件名；
+	-O  输出文件最优；
+	-a  指定arch体系；
+
+
+6.readelf
+
+• To retrieve a section header table:
+readelf -S <object>
+• To retrieve a program header table:
+readelf -l <object>
+• To retrieve a symbol table:
+readelf -s <object>
+• To retrieve the ELF file header data:
+readelf -e <object>
+• To retrieve relocation entries:
+readelf -r <object>
+• To retrieve a dynamic segment:
+readelf -d <object>
+
+
+This is the strace command used to trace a basic program:
+strace /bin/ls -o ls.out
+The strace command used to attach to an existing process is as follows:
+strace -p <pid> -o daemon.out
+If you want to see all of the data that was being read into file descriptor 3, you can
+run the following command:
+strace -e read=3 /bin/ls
+You may also use -e write=fd to see written data. The strace tool is a great little
+tool, and you will undoubtedly find many reasons to use it.
+
+ltrace <program> -o program.out
+
+ftrace
+
+
+addr2line		-将地址（十六进制）转换为代码行号
+ar			-静态库（或存档）工具
+as			-汇编程序
+c++			-C++前端
+c++filt			-将错误的名称转换为具有原型的功能
+cpp			-仅预处理器
+elfedit			-elf标头操作
+g++			-具有gnu扩展的C++
+gcc			-标准二进制文件（给定的选项可以执行与包装程序相同的操作）
+gcc-5.4.1		-具有多个GCC安装的系统的全名
+gcc-ar			-如果有多个“ ar”，则重命名
+gcc-nm			-如果有多个“ nm”，则重命名
+gcc-ranlib		-如果有多个“ ranlib”，则重命名
+gcov			-代码覆盖率
+gcov-tool		-代码覆盖率
+gdb			-调试器
+gdb-py			-更小的调试器
+gprof			-调用图/分析器
+ld			-链接器（很可能是金）
+ld.bfd			-具有更多功能的旧式链接器；对于大型C++项目，速度要慢得多
+nm			-以二进制形式显示“名称”
+objcopy			-操作二进制文件（节）
+objdump			-关于二进制文件的信息
+ranlib			-生成库索引
+readelf			-有关ELF二进制文件的信息
+size			-程序段大小
+strings			-将所有字符串转储为二进制文件
+strip			-从二进制文件中删除调试信息
+
+名称“gcc-ar”和“ ar”在物理上是同一件事。但是，路径（Solaris或其他Unix系统）中可能存在另一个“ ar”，并且可以使用“ gcc-ar”名称来获取特定于gcc的“ ar”。所有“ gcc-XXX”都适用于此用例。
+
+
+
