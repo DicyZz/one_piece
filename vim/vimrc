@@ -134,8 +134,8 @@ call plug#begin('~/.vim/plugged')
 
 " My vim list
 "Plug 'w0rp/ale'
-Plug 'skywind3000/asyncrun.vim'
-Plug 'Valloric/YouCompleteMe'
+"Plug 'skywind3000/asyncrun.vim'
+"Plug 'Valloric/YouCompleteMe'
 
 " Initialize plugin system
 call plug#end()
