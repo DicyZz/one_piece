@@ -1,0 +1,143 @@
+
+
+typedef	struct	global_data { 
+	bd_t			*bd;
+	unsigned long	flags;
+	unsigned long	baudrate;
+	unsigned long	have_console;	/* serial_init() was called */
+	unsigned long	reloc_off;		/* Relocation Offset */
+	unsigned long	env_addr;		/* Address  of Environment struct */
+	unsigned long	env_valid;		/* Checksum of Environment valid? */
+	unsigned long	fb_base;		/* base address of frame buffer */
+#ifdef CONFIG_VFD
+	unsigned char	vfd_type;		/* display type */
+#endif
+#if 0
+	unsigned long	cpu_clk;		/* CPU clock in Hz!		*/
+	unsigned long	bus_clk;
+	unsigned long	ram_size;		/* RAM size */
+	unsigned long	reset_status;	/* reset status register at boot */
+#endif
+	void			**jt;			/* jump table */
+} gd_t;	/*  asm-arm/global_data.h*/
+
+
+#define DECLARE_GLOBAL_DATA_PTR  register volatile gd_t *gd asm ("r8") /* asm-arm/global_data.h */
+
+__asm__ __volatile__("": : :"memory");	//？？
+
+void start_armboot (void) // lib_arm/board.c
+		|
+		|--int cpu_init (void) /* 申请栈空间 arm920t/cpu.c */
+		|
+		|--int board_init (void) /* GPIO初始化 初始化bd中两个数据 100ask24x0/100ask24x0.c */	
+		|	gd->bd->bi_arch_number = MACH_TYPE_S3C2440;
+		|	gd->bd->bi_boot_params = 0x30000100;
+		|		typedef struct {
+		|			S3C24X0_REG32   LOCKTIME;
+		|			S3C24X0_REG32   MPLLCON;
+		|			S3C24X0_REG32   UPLLCON;
+		|			S3C24X0_REG32   CLKCON;
+		|			S3C24X0_REG32   CLKSLOW;
+		|			S3C24X0_REG32   CLKDIVN;
+		|			S3C24X0_REG32   CAMDIVN;    /* for s3c2440, by www.100ask.net */
+		|		} /*__attribute__((__packed__))*/ S3C24X0_CLOCK_POWER; /* include/s3c24x0.h */
+		|
+		|--int interrupt_init (void) /* 初始化定时器4 s3c24x0/interrupt.c */
+				typedef struct {
+					S3C24X0_REG32   TCFG0;
+					S3C24X0_REG32   TCFG1;
+					S3C24X0_REG32   TCON;
+					S3C24X0_TIMER   ch[4];
+					S3C24X0_REG32   TCNTB4;
+					S3C24X0_REG32   TCNTO4;
+				} /*__attribute__((__packed__))*/ S3C24X0_TIMERS; /* include/s3c24x0.h */
+					|
+					|--get_PCLK()/(2 * 16 * 100)
+		|		
+		|--int  env_init(void) /* 环境变量初始化 common/env_flash.c */
+				gd->env_addr  = (ulong)&(env_ptr->data);
+				gd->env_valid = 1;
+				typedef	struct environment_s {
+					unsigned long	crc;		/* CRC32 over data bytes	*/
+				#ifdef CFG_REDUNDAND_ENVIRONMENT
+					unsigned char	flags;		/* active/obsolete flags	*/
+				#endif
+					unsigned char	data[ENV_SIZE]; /* Environment data		*/
+				} env_t; /* include/environment.h */
+		|
+		|--int init_baudrate (void) /*  lib_arm/board.c */
+					|
+					|--int getenv_r (char *name, char *buf, unsigned len) /*  common/cmd_nvedit.c */
+							|
+							|--env_get_char(i)--uchar env_get_char_init (int index)--uchar env_get_char_spec (int index)
+								gd->bd->bi_baudrate = gd->baudrate = (i > 0)
+								? (int) simple_strtoul (tmp, NULL, 10)
+								: CONFIG_BAUDRATE;
+		|					
+		|--int serial_init (void) /*  common/serial.c */
+			struct serial_device {
+				char name[NAMESIZE];
+				char ctlr[CTLRSIZE];
+
+				int  (*init) (void);
+				void (*setbrg) (void);
+				int (*getc) (void);
+				int (*tstc) (void);
+				void (*putc) (const char c);
+				void (*puts) (const char *s);
+
+				struct serial_device *next;
+			};
+		|			
+		|--int console_init_f (void) /* 控制台初始化 common/console.c */
+			gd->have_console = 1;
+				|
+				|--char *getenv (char *name)
+			gd->flags |= GD_FLG_SILENT;	/* common/console.c */
+		|
+		|--int display_banner (void) /*  lib_arm/board.c */
+		|
+		|--#ifdef CONFIG_DISPLAY_CPUINFO /* configs/pdnb3.h */
+			int dram_init(void) /* 100ask24x0/100ask24x0.c */
+			    gd->bd->bi_dram[0].start = PHYS_SDRAM_1;
+				gd->bd->bi_dram[0].size = PHYS_SDRAM_1_SIZE;
+		|
+		|--int display_dram_config (void) /*  lib_arm/board.c */
+		|
+		|--	addr = (_bss_end + (PAGE_SIZE - 1)) & ~(PAGE_SIZE - 1);
+			size = lcd_setmem (addr); /* common/lcd.c */
+			gd->fb_base = addr;
+		|
+		|--void mem_malloc_init (ulong dest_addr) /* lib_arm/board.c */
+		|
+		|--void env_relocate (void) /* common/env_common.c */
+		|
+		|--int devices_init (void) /* common/devices.c */
+				|
+				|--ListCreate (sizeof (device_t));
+		|
+		|--void jumptable_init (void) /* common/exports.c */
+		|
+		|--int console_init_r (void) /* common/sonsole.c */
+		|
+		|--...
+		|
+		|--main_loop /* common/main.c */
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
