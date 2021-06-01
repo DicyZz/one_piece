@@ -11,7 +11,7 @@ Vim的几种模式
 
     
 
- **Vim键盘命令图**：![20191219104939654](/home/jian/Work/tools/vim/vim_cmd/20191219104939654.jpg)
+ **Vim键盘命令图**：![20191219104939654](https://i.loli.net/2021/06/01/4G5NfvuZhInxJkX.jpg)
 
 
 

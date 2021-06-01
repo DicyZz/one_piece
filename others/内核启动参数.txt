@@ -1,3 +1,4 @@
+Documentation/kernel-paramenters.txt
 A. root 
 用来指定rootfs的位置，常见的情况有: 
     root=/dev/ram rw   
