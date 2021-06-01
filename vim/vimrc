@@ -5,10 +5,10 @@ set tags=tags;
 " 保存时自动更新tags
 " autocmd BufWritePost * call system("ctags -R")
 
-"ff映射到ctrl+],这将中调用ctags的数据库跳转,在速度上会快一点. 如果发现ff无法实现跳转,可以试着使用fg, 这个会调用cscope的数据库实现跳转.
-nmap ff <c-]>  
-"ss映射到ctrl+t , 在使用ff跳转的使用通过ss跳转回来,纯属个人在功能映射上的多余之举.
-nmap gg <c-t> 
+"fr映射到ctrl+],这将中调用ctags的数据库跳转,在速度上会快一点. 如果发现fr无法实现跳转,可以试着使用fg, 这个会调用cscope的数据库实现跳转.
+nmap fr <c-]>  
+"ff映射到ctrl+t , 在使用fr跳转的使用通过ff跳转回来.
+nmap ff <c-t> 
 
 " cscope set
 "s:查找即查找C语言符号出现的地方
