@@ -102,7 +102,7 @@ FADD S0 S1 S2
 
 
 
-![Screenshot from 2021-06-01 19-42-36](/home/jian/Pictures/Screenshot from 2021-06-01 19-42-36.png)
+![Screenshot from 2021-06-01 19-42-36](https://i.loli.net/2021/06/02/DR1BPA4UmefFYEw.png)
 
 BFI指令将位域插入寄存器。在上图中, BFI 取 6位来自源寄存器 (W0) 的位字段并将其插入目标中的第 9 位登记。
 UBFX 提取一个位域。在上图中, UBFX 从第 18 位开始取一个 7 位字段在源寄存器中,并将其放置在目标寄存器中
@@ -112,7 +112,7 @@ WZR 是零登记。
 
 
 
-![Screenshot from 2021-06-01 19-45-56](/home/jian/Pictures/Screenshot from 2021-06-01 19-45-56.png)
+![Screenshot from 2021-06-01 19-45-56](https://i.loli.net/2021/06/02/YHibNsjMedCL8l1.png)
 
 REV16 指令反转 W 寄存器中的两个半字( 16 位)。在上图中,有一条指令将整个寄存器中的字节反转
 
@@ -125,7 +125,7 @@ REV16 指令反转 W 寄存器中的两个半字( 16 位)。在上图中,有一�
 UXTH 是半字 (H) 的无符号扩展。它需要 W1 的底部 16 位和零
 将其扩展到 32 位
 
-![Screenshot from 2021-06-01 19-48-52](/home/jian/Pictures/Screenshot from 2021-06-01 19-48-52.png)
+![Screenshot from 2021-06-01 19-48-52](https://i.loli.net/2021/06/02/pRCmBxkKPdV3Gnj.png)
 
 对于表中的 16 位示例,需要额外的指令。中的第三个例子table 接受 16 位输入,将它们扩展到 32 位,然后执行加法。这序列将 16 位输入转换为 32 位,使用:
 SXTH W8,W1
@@ -142,7 +142,7 @@ W0,W8,W0,SXTH
 
 我们已经看到 MOV 和 MVN 指令将值从一个寄存器复制到另一个寄存器。类似地, FMOV 可用于在浮点寄存器和通用寄存器之间进行复制。但是,使用 FMOV 会在寄存器之间复制文字位模式。还有可以转换为最接近表示的指令,如下图所示
 
-![Screenshot from 2021-06-01 19-51-40](/home/jian/Pictures/Screenshot from 2021-06-01 19-51-40.png)
+![Screenshot from 2021-06-01 19-51-40](https://i.loli.net/2021/06/02/SnYBpbegOVChPvd.png)
 
 #### 矢量数据
 
@@ -183,11 +183,11 @@ LDR W0, [X1]
 有几种寻址模式定义了地址的形成方式。
 • 基址寄存器 —— 最简单的寻址形式是单个寄存器。基址寄存器是一个 X 包含被访问数据的完整或绝对虚拟地址的寄存器，可以在这个图中看到:
 
-![Screenshot from 2021-06-01 20-14-30](/home/jian/Pictures/Screenshot from 2021-06-01 20-14-30.png)
+![Screenshot from 2021-06-01 20-14-30](https://i.loli.net/2021/06/02/zBalcUHJdLkA5of.png)
 
 • 偏移寻址模式 - 可以选择将偏移应用于基地址
 
-![Screenshot from 2021-06-01 20-02-19](/home/jian/Pictures/Screenshot from 2021-06-01 20-02-19.png)
+![Screenshot from 2021-06-01 20-02-19](https://i.loli.net/2021/06/02/YKvVHTGSMZwn38J.png)
 
 在上图中, X1 包含基地址, #12 是一个字节偏移量地址。这意味着访问的地址是 X1+12 。偏移量可以是
 常量或其他寄存器。例如,这种类型的寻址可用于结构。
@@ -195,13 +195,13 @@ LDR W0, [X1]
 
 • 预索引寻址模式 - 在指令语法中,预索引通过添加感叹号 ! 在方括号之后,如下图所示:
 
-![Screenshot from 2021-06-01 20-03-31](/home/jian/Pictures/Screenshot from 2021-06-01 20-03-31.png)
+![Screenshot from 2021-06-01 20-03-31](https://i.loli.net/2021/06/02/3PNTSG5gD2iYp6W.png)
 
 预变址寻址类似于偏移寻址,除了基指针更新为指令的结果。在上图中, X1 的值在 X1+12 之后指令已完成。
 
 • 索引后寻址模式 - 使用索引后寻址,值从基指针中的地址,然后更新指针,如下图所示:
 
-![Screenshot from 2021-06-01 20-10-52](/home/jian/Pictures/Screenshot from 2021-06-01 20-10-52.png)
+![Screenshot from 2021-06-01 20-10-52](https://i.loli.net/2021/06/02/OHcJzagSFLt9Piu.png)
 
 后索引寻址对于弹出堆栈很有用。指令加载值从堆栈指针指向的位置开始,然后将堆栈指针移到堆栈中的下一个完整位置。
 
@@ -278,7 +278,7 @@ TBX的工作方式与 CBZ/CBNZ 类似,但测试 <imm> 指定的位。
 
 **注意:直接或 PC 相关的分支存储到目标的偏移量操作说明。条件分支的范围更小。这是因为有些位是需要存储条件本身,从而为偏移量留下更少的位。**
 
-![Screenshot from 2021-06-01 20-41-08](/home/jian/Pictures/Screenshot from 2021-06-01 20-41-08.png)
+![Screenshot from 2021-06-01 20-41-08](https://i.loli.net/2021/06/02/hp7osaKQNbwG1M9.png)
 
 
 
@@ -313,7 +313,7 @@ TST - 测试
 
 分支  条件选择
 
-![Screenshot from 2021-06-01 20-49-55](/home/jian/Pictures/Screenshot from 2021-06-01 20-49-55.png)
+![Screenshot from 2021-06-01 20-49-55](https://i.loli.net/2021/06/02/VYCwAiWvN9tGzLm.png)
 
 在这些类型的示例中,条件选择具有一些优势。序列是无论结果如何,都更短并采用相同数量的指令。
 重要的是,条件选择还消除了分支的需要。在现代处理器中,这分支预测逻辑很难正确预测哪种分支。一种错误预测的分支会对性能产生负面影响,最好删除尽可能分行
@@ -330,7 +330,7 @@ TST - 测试
 
 有一个专⻔的函数返回指令 RET 。这将执行一个间接分支到链接寄存器中的地址。总之,这意味着我们得到
 
-![Screenshot from 2021-06-01 20-52-06](/home/jian/Pictures/Screenshot from 2021-06-01 20-52-06.png)
+![Screenshot from 2021-06-01 20-52-06](https://i.loli.net/2021/06/02/TfsqBMY57RtxovL.png)
 
 **注:图中显示了用 GAS 语法汇编器编写的函数 foo() 。关键字.global 导出符号, .type 表示导出的符号是一个函数。**
 为什么我们需要一个特殊的函数返回指令?
@@ -352,7 +352,7 @@ PCS 规定:
 
 考虑一个从 main() 调用的函数 foo() :
 
-![Screenshot from 2021-06-01 20-55-08](/home/jian/Pictures/Screenshot from 2021-06-01 20-55-08.png)
+![Screenshot from 2021-06-01 20-55-08](https://i.loli.net/2021/06/02/9quTUeDO5ZiJw1I.png)
 
 PCS说第一个参数在 X0 中传递,第二个参数在 X1 中,依此类推
 到 X7 。任何进一步的参数都在堆栈上传递。我们的函数 foo() 需要两个参数: b 和 c 。因此, b 将在 W0 中, c 将在 W1 中。
@@ -362,7 +362,7 @@ PCS说第一个参数在 X0 中传递,第二个参数在 X1 中,依此类推
 
 接下来，PCS 定义了哪些寄存器可以被破坏，哪些寄存器不能被破坏。 如果某个寄存器可能被损坏，则调用的函数可以覆盖而无需恢复，如以下 PCS 寄存器规则表所示：
 
-![Screenshot from 2021-06-01 20-58-32](/home/jian/Pictures/Screenshot from 2021-06-01 20-58-32.png)
+![Screenshot from 2021-06-01 20-58-32](https://i.loli.net/2021/06/02/M9kyd68HEsGjufA.png)
 
 例如,函数 foo() 可以使用寄存器 X0 到 X15 而无需保留它们的
 值。但是,如果 foo() 要使用 X19 到 X28 ,则必须先将它们保存到堆栈中,然后
