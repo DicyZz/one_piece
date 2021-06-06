@@ -57,10 +57,6 @@ autocmd StdinReadPre * let s:std_in=1
 let NERDTreeWinSize=25
 let NERDTreeAutoCenter=1
 let NERDTreeShowLineNumbers=0
-" 打开nerdtree不切换光标
-autocmd VimEnter * NERDTree
-wincmd w
-autocmd VimEnter * wincmd w
 
 " 主页面退出关闭nerdtree和taglist
 autocmd BufEnter * if 0 == len(filter(range(1, winnr('$')), 'empty(getbufvar(winbufnr(v:val), "&bt"))')) | qa! | endif
@@ -139,51 +135,4 @@ call plug#begin('~/.vim/plugged')
 
 " Initialize plugin system
 call plug#end()
-
-"--------------------------------------------------------------------------------------
-" ale
-
-" asyncrun
-" 查找根目录
-let g:asyncrun_rootmarks = ['.svn', '.git', '.root', '_darcs', 'build.xml']
-" 自动打开 quickfix window ，高度为 6
-let g:asyncrun_open = 6
-" 任务结束时候响铃提醒
-let g:asyncrun_bell = 1
-" 设置 F10 打开/关闭 Quickfix 窗口
-nnoremap <F10> :call asyncrun#quickfix_toggle(6)<cr>
-" 设置F7编译整个项目，注意makefile的目录，可以自行修改
-nnoremap <silent> <F7> :AsyncRun -cwd=<root>/src make <cr>
-
-" YouCompleteMe 
-"默认配置文件路径"
-let g:ycm_global_ycm_extra_conf = '~/.ycm_extra_conf.py'
-"打开vim时不再询问是否加载ycm_extra_conf.py配置"
-let g:ycm_confirm_extra_conf=0
-set completeopt=longest,menu
-"python解释器路径"
-let g:ycm_path_to_python_interpreter='/usr/bin/python3'
-"是否开启语义补全"
-let g:ycm_seed_identifiers_with_syntax=1
-"是否在注释中也开启补全"
-let g:ycm_complete_in_comments=1
-let g:ycm_collect_identifiers_from_comments_and_strings = 0
-"开始补全的字符数"
-let g:ycm_min_num_of_chars_for_completion=2
-"补全后自动关机预览窗口"
-let g:ycm_autoclose_preview_window_after_completion=1
-" 禁止缓存匹配项,每次都重新生成匹配项"
-let g:ycm_cache_omnifunc=0
-"字符串中也开启补全"
-let g:ycm_complete_in_strings = 1
-" 关闭语法检查
-let g:ycm_show_diagnostics_ui = 0
-"离开插入模式后自动关闭预览窗口"
-autocmd InsertLeave * if pumvisible() == 0|pclose|endif
-"上下左右键行为"
-inoremap <expr> <Down>     pumvisible() ? '\<C-n>' : '\<Down>'
-inoremap <expr> <Up>       pumvisible() ? '\<C-p>' : '\<Up>'
-inoremap <expr> <PageDown> pumvisible() ? '\<PageDown>\<C-p>\<C-n>' : '\<PageDown>'
-inoremap <expr> <PageUp>   pumvisible() ? '\<PageUp>\<C-p>\<C-n>' : '\<PageUp>'
-
 
