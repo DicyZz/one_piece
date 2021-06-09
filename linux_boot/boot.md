@@ -1,4 +1,4 @@
-![image-20201215171930922](/home/jian/Documents/one_piece/linux_boot/boot/image-20201215171930922.png)
+![](https://i.loli.net/2021/06/03/8h6yfz1kYroXvIL.png)
 
 ![image-20201215171957244](https://i.loli.net/2021/06/01/FrwlH2KX9Likstd.png)
 

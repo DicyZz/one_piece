@@ -1,3 +1,21 @@
+x86汇编语言有两个主要的语法分支：Intel语法和AT&T语法。
+Intel 语法在DOS和Windows世界中占主导地位，而 AT&T 语法在Unix世界中占主导地位，因为 Unix 是在AT&T 贝尔实验室创建的。这里总结了Intel 语法和AT&T 语法之间的主要区别：
+
+|          |                             AT&T                             |                            Intel                             |
+| :------: | :----------------------------------------------------------: | :----------------------------------------------------------: |
+| 参数顺序 |             源在目的地之前<br />`movl $5, %eax `             |              目的地在源之前.<br />`mov eax, 5 `              |
+| 参数大小 | 助记符的后缀是一个表示操作数大小的字母：*q*代表 qword，*l*代表长 (dword)，*w*代表字，*b*代表字节<br/>  `addl $4, %esp ` | 从所使用的寄存器的名称衍生的（例如*RAX，EAX，斧头，人*暗示*Q，L，W，B*分别）<br/>`add esp, 4 ` |
+|   符号   | 以“$”为前缀的[立即值](https://en.wikipedia.org/wiki/Constant_(programming))，以“%”为前缀的寄存器 | 汇编器自动检测符号的类型；即，无论它们是寄存器、常量还是其他东西 |
+| 有效地址 | *DISP(BASE,INDEX,SCALE) 的*一般语法。例子:<br />`movl mem_location(%ebx,%ecx,4), %eax ` | 方括号中的算术表达式；此外，如果无法从操作数确定大小，则必须使用大小关键字，如*byte*、*word*或*dword*。Example:<br />`mov eax, [ebx + ecx*4 + mem_location]` |
+
+GAS（GNU as）指令（所有架构通用）：https://www.sourceware.org/binutils/docs-2.12/as.info/Pseudo-Ops.html#Pseudo%20Ops
+
+
+
+有趣的是，linux中x86架构下的汇编采用AT&T 语法，而arm架构下的汇编则采用Intel语法。嗯。。。
+
+
+
 ADR : 装载地址
 ADRL : 装载长地址
 ALIGN : 对齐指针
