@@ -1,10 +1,18 @@
+## 指令
+
+指令包含CPU的指令，gcc、gas的指令，gcc和gas的指令是帮助将CPU指令更好的翻译成二进制文件，在汇编中则用不到gcc的指令
+
+CPU指令参考具体的CPU ISA Manual
+
+GAS（GNU as）指令（所有架构通用）：https://www.sourceware.org/binutils/docs-2.12/as.info/Pseudo-Ops.html#Pseudo%20Ops
+
 > **ISA：arm指令集** 
 >
 > **IA-32：i386指令集** 
 >
 > **IA-64：Itanium指令集（64位）**
 >
->  **x86_64：amd指令集架构（64位兼容32位）**
+> **x86_64：amd指令集架构（64位兼容32位）**
 
 Armv8-A 支持三种指令集：A32、T32 和 A64。
 
