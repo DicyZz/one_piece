@@ -369,7 +369,7 @@ git log -S "Hello, World!" 						查看Hello, World!字符串的修改记录
 ```
 
 
-
+&nbsp;
 ### 比较
 
 ---
@@ -387,12 +387,12 @@ git log dev ^master								dev中有而master中没有的commit
 ```
 
 
-
+&nbsp;
 ### 清除文件
 
 ---
 
-**clean**
+**clean（未加入git的文件）**
 
 清除多余文件
 
@@ -400,7 +400,7 @@ git log dev ^master								dev中有而master中没有的commit
 git clean -n
 ```
 
-**rm**
+**rm（已加入git的文件）**
 
 从暂存区删除，但不删除文件
 
