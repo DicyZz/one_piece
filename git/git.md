@@ -345,27 +345,27 @@ git am 和 git apply，两者之间有什么区别呢？
 **log**
 
 ```
-git log master..feature							包含了feature分支中所有不在master分支上的commit
-git log --oneline/--pretty=oneline 				以精简模式显示
-git log --graph 								以图形模式显示
-git log --stat 									显示文件更改列表
-git log -p 										按补丁显示每个更新间的差异，比stat命令信息更全
-git log -p filepath 							按补丁显示filepatch文件每个更新间的差异
+git log master..feature                   包含了feature分支中所有不在master分支上的commit
+git log --oneline/--pretty=oneline        以精简模式显示
+git log --graph                           以图形模式显示
+git log --stat                            显示文件更改列表
+git log -p                                按补丁显示每个更新间的差异，比stat命令信息更全
+git log -p filepath                       按补丁显示filepatch文件每个更新间的差异
 git log --stat commitId/git show --stat commitId 		查看某一次提交的文件修改列表
-git log --name-status							显示新增、修改和删除的文件清单
+git log --name-status	                    显示新增、修改和删除的文件清单
 
-git log --merges/--no-merges 					查看所有的合并/非合并提交
-git log --since/--after="date" 					某个日期之后
-git log --until/--before="date" 				某个日期之前
-git log -i --grep="xxx" 						在log信息中查找xxx，-i忽略大小写
-git log --author='name' 						显示某个作者的commit
-git log branch --								某个分支上的log
-git log v1.0..									v1.0标签之后的commit
+git log --merges/--no-merges              查看所有的合并/非合并提交
+git log --since/--after="date"            某个日期之后
+git log --until/--before="date"           某个日期之前
+git log -i --grep="xxx"                   在log信息中查找xxx，-i忽略大小写
+git log --author='name'                   显示某个作者的commit
+git log branch --	                        某个分支上的log
+git log v1.0..                            v1.0标签之后的commit
 
-git log -- foo.py bar.py						--参数是声明后面传入的参数是文件路径，而不是分支名
-git log -L :FuncName:FilePath					查看某个函数修改记录
-git log -L start,end:filepath 					查看某个文件某几行范围内的修改记录
-git log -S "Hello, World!" 						查看Hello, World!字符串的修改记录
+git log -- foo.py bar.py                  --参数是声明后面传入的参数是文件路径，而不是分支名
+git log -L :FuncName:FilePath	            查看某个函数修改记录
+git log -L start,end:filepath             查看某个文件某几行范围内的修改记录
+git log -S "Hello, World!"                查看Hello, World!字符串的修改记录
 ```
 
 
@@ -377,13 +377,13 @@ git log -S "Hello, World!" 						查看Hello, World!字符串的修改记录
 **diff**
 
 ```
-git diff filepath 								工作区与暂存区比较
-git diff HEAD filepath 							工作区与HEAD (当前工作分支) 比较
-git diff --cached								暂存区与最新本地版本库
-git diff commit-id commit-id					两个commit比较
-git diff branch1 branch2 --stat					两个分支所有差异，--stat只显示文件
-git diff branch1..branch2						branch1比branch2多提交的内容
-git log dev ^master								dev中有而master中没有的commit
+git diff filepath                        工作区与暂存区比较
+git diff HEAD filepath                   工作区与HEAD (当前工作分支) 比较
+git diff --cached	                       暂存区与最新本地版本库
+git diff commit-id commit-id             两个commit比较
+git diff branch1 branch2 --stat					 两个分支所有差异，--stat只显示文件
+git diff branch1..branch2						     branch1比branch2多提交的内容
+git log dev ^master								       dev中有而master中没有的commit
 ```
 
 
