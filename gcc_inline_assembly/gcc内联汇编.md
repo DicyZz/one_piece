@@ -74,7 +74,7 @@ __asm__ ("mov %0，%%bx" : : "a"(__shrt));
 约束 Input/Output意义 
 ```
 r : 使用一个通用寄存器，由GCC在%eax/%ax/%al, %ebx/%bx/%bl, %ecx/%cx/%cl, %edx/%dx/%dl中选取一个GCC认为合适的。
-m : 允许一个内存操作数使用机器普遍支持的任一种地址。
+m : 允许一个内存操作数使用机器支持的任一种地址空间中的地址。
 o : 允许一个内存操作数，但只有当地址是可偏移的。即，该地址加上一个小的偏移量可以得到一个地址。
 V : A memory operand that is not offsettable. In other words, anything that would fit the m constraint but not the o constraint.
 i : 允许一个（带有常量）的立即整形操作数。这包括其值仅在汇编时期知道的符号常量。
