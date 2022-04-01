@@ -259,6 +259,16 @@ git reset --soft  HEAD^
 git reset --hard  HEAD^
 ```
 
+删除某个commit不产生记录
+```
+git rebase -i commit_before
+```
+
+删掉莫个commit并产生一次记录
+```
+git revert xxx
+```
+
 
 &nbsp;
 ### 临时分支处理
