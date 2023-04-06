@@ -1,15 +1,55 @@
+"---------------------------------------------------------------------------------
+" basic config 
+syntax on						" 语法高亮
+set autoindent					" 自动缩进
+set cindent						" C语言自动缩进
+set smartindent					" 为新行添加同上行的缩进
+filetype on						" 开启文件类型侦测
+filetype plugin on				" Enable plugins and load plugin for the detected file type
+filetype indent on				" Load an indent file for the detected file type
+set tabstop=4					" tab键长度
+set shiftwidth=2				" 缩进宽度
+set expandtab					" Use space characters instead of tabs
+set incsearch					" 搜索时输入时进行匹配
+set hls							" 搜索时高亮显示
+set mouse=a						" 鼠标
+set nu							" 行号
+set scrolloff=2					" 上下可视行数
+set ignorecase smartcase		" 搜索时默认不区分大小写，只有搜索关键字中出现一个大字母时才区分大小写
+set nobackup					" Do not save backup files
+set wildmenu                    " Enable auto completion menu after pressing TAB
+set wildmode=list:longest       " Make wildmenu behave like similar to Bash completion
+
+" Wildmenu will ignore files with these extensions
+set wildignore=*.docx,*.jpg,*.png,*.gif,*.pdf,*.pyc,*.exe,*.flv,*.img,*.xlsx 
+
+"复制到系统剪切版，visual模式下使用
+vmap Y "+y
+"从系统剪切版粘贴
+nmap P "+p
+
+" allow backspacing over everything in insert mode
+set backspace=indent,eol,start
+
+"vim自动打开跳到上次的光标位置
+if has("autocmd")
+        au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif
+endif
+
+" 主页面退出关闭nerdtree和taglist
+autocmd BufEnter * if 0 == len(filter(range(1, winnr('$')), 'empty(getbufvar(winbufnr(v:val), "&bt"))')) | qa! | endif
+
+"----------------------------------------------------------------------------------
 " ctags set
 set autochdir
 set tags=tags;
 
-" 保存时自动更新tags
-" autocmd BufWritePost * call system("ctags -R")
-
 "fr映射到ctrl+],这将中调用ctags的数据库跳转,在速度上会快一点. 如果发现fr无法实现跳转,可以试着使用fg, 这个会调用cscope的数据库实现跳转.
-nmap fr <c-]>  
+nmap fr <c-]>
 "ff映射到ctrl+t , 在使用fr跳转的使用通过ff跳转回来.
-nmap ff <c-t> 
+nmap ff <c-t>
 
+"---------------------------------------------------------------------------------
 " cscope set
 "s:查找即查找C语言符号出现的地方
 nmap fs :cs find s <C-R>=expand("<cword>")<CR><CR>
@@ -37,13 +77,23 @@ set cspc=7
 " 关闭autocscope快捷键映射
 let g:autocscope_menus=0
 
+"---------------------------------------------------------------------------------
 " taglist
-nnoremap <silent> <F3> :TlistToggle<CR>
-let Tlist_Ctags_Cmd = '/usr/bin/ctags' 
-let Tlist_Show_One_File = 1 		"不同时显示多个文件的tag，只显示当前文件的
-let Tlist_Use_Right_Window = 1 		"在右侧窗口中显示taglist窗口
-let Tlist_Exit_OnlyWindow = 1 		"如果taglist窗口是最后一个窗口，则退出vim 
+" nnoremap <silent> <F3> :TlistToggle<CR>
+" let Tlist_Ctags_Cmd = '/usr/bin/ctags' 
+" 不同时显示多个文件的tag，只显示当前文件的
+" let Tlist_Show_One_File = 1 		
+" 在右侧窗口中显示taglist窗口
+" let Tlist_Use_Right_Window = 1 		
+" 如果taglist窗口是最后一个窗口，则退出vim 
+" let Tlist_Exit_OnlyWindow = 1 		
 
+" 启动时自动focus
+let g:tagbar_autofocus=0
+" <F3>打开/关闭Tagbar
+nnoremap <silent> <F3> :TagbarToggle<CR>
+
+"---------------------------------------------------------------------------------
 " nerdtree
 map <F2> :NERDTreeMirror<CR>
 map <F2> :NERDTreeToggle<CR>
@@ -54,82 +104,113 @@ let g:NERDTreeDirArrowCollapsible = '|'
 let g:NERDTreeHidden=0    
 " 定位到当前目录 
 autocmd StdinReadPre * let s:std_in=1
-let NERDTreeWinSize=25
+let NERDTreeWinSize=40
 let NERDTreeAutoCenter=1
 let NERDTreeShowLineNumbers=0
 
-" 主页面退出关闭nerdtree和taglist
-autocmd BufEnter * if 0 == len(filter(range(1, winnr('$')), 'empty(getbufvar(winbufnr(v:val), "&bt"))')) | qa! | endif
+" Have nerdtree ignore certain files and directories.
+let NERDTreeIgnore=['\.git$', '\.jpg$', '\.mp4$', '\.ogg$', '\.iso$', '\.pdf$', '\.pyc$', '\.odt$', '\.png$', '\.gif$', '\.db$']
 
-"复制到系统剪切版，visual模式下使用
-vmap Y "+y
-"从系统剪切版粘贴
-nmap P "+p
-
-set autoindent 	 	"自动缩进
-set cindent			"C语言自动缩进
-set smartindent 	"为新行添加同上行的缩进
-set tabstop=4 		"tab键长度
-set shiftwidth=4  	"缩进宽度
-set incsearch  		"搜索时输入时进行匹配
-set hls				"搜索时高亮显示
-set mouse= 			"鼠标
-set nu				"行号
-set scrolloff=3 	"上下可视行数
-set ignorecase smartcase "搜索时默认不区分大小写，只有搜索关键字中出现一个大字母时才区分大小写
-
-"autocmd VimEnter * NERDTree | wincmd p
-
-"vim自动打开跳到上次的光标位置
-if has("autocmd")
-        au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif
-endif
-
-" 解决插入模式下delete/backspce键失效问题
-set backspace=2
-
-"---------------------------------------------------------------------------------------
-
-" Specify a directory for plugins
-" - For Neovim: stdpath('data') . '/plugged'
-" - Avoid using standard Vim directory names like 'plugin'
+"---------------------------------------------------------------------------------
+" PLUGINS ---------------------------------------------------------------- {{{
 call plug#begin('~/.vim/plugged')
 
-" Make sure you use single quotes
+  Plug 'preservim/nerdtree'
 
-" Shorthand notation; fetches https://github.com/junegunn/vim-easy-align
-"Plug 'junegunn/vim-easy-align'
+  Plug 'preservim/tagbar'
 
-" Any valid git URL is allowed
-"Plug 'https://github.com/junegunn/vim-github-dashboard.git'
+  Plug 'tpope/vim-fugitive'
 
-" Multiple Plug commands can be written in a single line using | separators
-"Plug 'SirVer/ultisnips' | Plug 'honza/vim-snippets'
+  Plug 'vim-airline/vim-airline'
 
-" On-demand loading
-"Plug 'scrooloose/nerdtree', { 'on':  'NERDTreeToggle' }
-"Plug 'tpope/vim-fireplace', { 'for': 'clojure' }
+  Plug 'kien/ctrlp.vim'
 
-" Using a non-default branch
-"Plug 'rdnetto/YCM-Generator', { 'branch': 'stable' }
+  Plug 'scrooloose/syntastic'
 
-" Using a tagged release; wildcard allowed (requires git 1.9.2 or above)
-"Plug 'fatih/vim-go', { 'tag': '*' }
-
-" Plugin options
-"Plug 'nsf/gocode', { 'tag': 'v.20150303', 'rtp': 'vim' }
-
-" Plugin outside ~/.vim/plugged with post-update hook
-"Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
-
-" Unmanaged plugin (manually installed and updated)
-"Plug '~/my-prototype-plugin'
-
-" My vim list
-"Plug 'w0rp/ale'
-"Plug 'skywind3000/asyncrun.vim'
-"Plug 'Valloric/YouCompleteMe'
-
-" Initialize plugin system
 call plug#end()
+
+" }}}
+
+"---------------------------------------------------------------------------------
+" MAPPINGS --------------------------------------------------------------- {{{
+
+" Press \\ to jump back to the last cursor position.
+nnoremap <leader>\ ``
+
+" Press \p to print the current file to the default printer from a Linux operating system.
+" View available printers:   lpstat -v
+" Set default printer:       lpoptions -d <printer_name>
+" <silent> means do not display output.
+nnoremap <silent> <leader>p :%w !lp<CR>
+
+" Type jj to exit insert mode quickly.
+inoremap jj <Esc>
+
+" Press the space bar to type the : character in command mode.
+nnoremap <space> :
+
+" Pressing the letter o will open a new line below the current one.
+" Exit insert mode after creating a new line above or below the current line.
+nnoremap o o<esc>
+nnoremap O O<esc>
+
+" Center the cursor vertically when moving to the next word during a search.
+nnoremap n nzz
+nnoremap N Nzz
+
+" Map the F5 key to run a Python script inside Vim.
+" I map F5 to a chain of commands here.
+" :w saves the file.
+" <CR> (carriage return) is like pressing the enter key.
+" !clear runs the external clear screen command.  " !python3 % executes the current file with Python.
+nnoremap <f5> :w <CR>:!clear <CR>:!python3 % <CR>
+
+" You can split the window in Vim by typing :split or :vsplit.
+" Navigate the split view easier by pressing CTRL+j, CTRL+k, CTRL+h, or CTRL+l.
+nnoremap <c-j> 5j
+nnoremap <c-k> 5k
+nnoremap <c-h> <c-w>h
+nnoremap <c-l> <c-w>l
+
+" Resize split windows using arrow keys by pressing:
+" CTRL+UP, CTRL+DOWN, CTRL+LEFT, or CTRL+RIGHT.
+noremap <c-up> <c-w>+
+noremap <c-down> <c-w>-
+noremap <c-left> <c-w>>
+noremap <c-right> <c-w><
+
+" }}}
+
+"---------------------------------------------------------------------------------
+" STATUS LINE ------------------------------------------------------------ {{{
+
+" Clear status line when vimrc is reloaded.
+set statusline=
+
+" Status line left side.
+set statusline+=\ %F\ %M\ %Y\ %R
+
+" Use a divider to separate the left side from the right side.
+set statusline+=%=
+
+" Status line right side.
+set statusline+=\ ascii:\ %b\ hex:\ 0x%B\ row:\ %l\ col:\ %c\ percent:\ %p%%
+
+" Show the status on the second to last line.
+set laststatus=2
+
+" }}}
+
+"---------------------------------------------------------------------------------
+" syntax 
+set statusline+=%#warningmsg#
+set statusline+=%{SyntasticStatuslineFlag()}
+set statusline+=%*
+
+let g:syntastic_always_populate_loc_list = 0
+let g:syntastic_auto_loc_list = 0
+let g:syntastic_check_on_open = 1
+let g:syntastic_check_on_wq = 1
+
+
 
